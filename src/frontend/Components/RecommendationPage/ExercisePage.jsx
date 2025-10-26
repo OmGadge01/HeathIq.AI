@@ -27,13 +27,23 @@ const SectionBlock = ({ title, subtitle, cards, onCardClick }) => (
 
 const ExercisePage = () => {
   const [selectedCard, setSelectedCard] = useState(null);
+  const [aiResponse, setAiResponse] = useState({});
   const [completedLines, setCompletedLines] = useState([]);
   const [currentLine, setCurrentLine] = useState("");
   const [lineIndex, setLineIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
+  const [loading, setLoading] = useState(false);
   const notesRef = useRef(null);
 
-  // Data for notes
+  // Example exercise cards and descriptions
+  const exerciseCards = [
+    { title: "Training Structure 🏋️‍♀️", description: "Plan your week with structured strength & cardio.", color: "bg-green-100" },
+    { title: "Rest & Recovery 😴", description: "Recover efficiently with sleep and active rest.", color: "bg-red-100" },
+    { title: "Cardio Routine 🚴", description: "Boost stamina and endurance with cardio plans.", color: "bg-yellow-100" },
+    { title: "Form & Function 🎯", description: "Maintain posture and form for safe exercise.", color: "bg-gray-100" },
+  ];
+
+  // Static note data for now; later can be replaced with API response
   const noteData = {
     "Training Structure 🏋️‍♀️": [
       "**Consult a Trainer:** Seek expert advice for proper form and structure.",
@@ -57,33 +67,25 @@ const ExercisePage = () => {
     ],
   };
 
-  const exerciseCards = Object.keys(noteData).map((title, i) => ({
-    title,
-    description: [
-      "Balance strength, mobility, and recovery across your week.",
-      "Rest smart—growth happens when you recover well.",
-      "Boost stamina with effective and time-efficient cardio.",
-      "Stay injury-free with proper posture and movement patterns.",
-    ][i],
-    color: ["bg-green-100", "bg-red-100", "bg-yellow-100", "bg-gray-100"][i],
-  }));
-
   const handleCardClick = (cardTitle) => {
     setSelectedCard(cardTitle);
     setCompletedLines([]);
     setCurrentLine("");
     setLineIndex(0);
     setCharIndex(0);
-    setTimeout(() => {
-      notesRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, 300);
+    setTimeout(() => notesRef.current?.scrollIntoView({ behavior: "smooth" }), 300);
   };
 
   // Typing animation effect
   useEffect(() => {
     if (!selectedCard) return;
 
-    const lines = noteData[selectedCard] || [];
+    // Match section (ignore emojis and spaces)
+    const matchedKey = Object.keys(noteData).find((key) =>
+      key.toLowerCase().includes(selectedCard.replace(/[\u{1F300}-\u{1F6FF}]/gu, "").trim().toLowerCase())
+    );
+
+    const lines = matchedKey ? noteData[matchedKey] : ["No recommendation available for this section."];
 
     if (lineIndex >= lines.length) return;
 
@@ -118,32 +120,16 @@ const ExercisePage = () => {
         </div>
 
         {/* Cards Section */}
-        <SectionBlock
-          title="Exercise Plan"
-          subtitle="Improve strength, mobility, and endurance with your custom routine."
-          cards={exerciseCards}
-          onCardClick={handleCardClick}
-        />
+        <SectionBlock title="Exercise Plan" subtitle="Improve strength, mobility, and endurance with your custom routine." cards={exerciseCards} onCardClick={handleCardClick} />
 
         {/* Notes Section */}
         {selectedCard && (
-          <div
-            ref={notesRef}
-            className="bg-white rounded-xl p-6 shadow-md mt-10 border border-gray-200 prose max-w-none"
-          >
-            <h2 className="text-xl font-bold text-blue-950 mb-4">
-              {selectedCard} – Detailed Notes
-            </h2>
-
-            {/* Completed lines */}
+          <div ref={notesRef} className="bg-white rounded-xl p-6 shadow-md mt-10 border border-gray-200 prose max-w-none">
+            <h2 className="text-xl font-bold text-blue-950 mb-4">{selectedCard} – Detailed Notes</h2>
             {completedLines.map((line, i) => (
               <ReactMarkdown key={i}>{line}</ReactMarkdown>
             ))}
-
-            {/* Currently typing line */}
-            {currentLine && (
-              <ReactMarkdown>{currentLine + ""}</ReactMarkdown>
-            )}
+            {currentLine && <ReactMarkdown>{currentLine}</ReactMarkdown>}
           </div>
         )}
       </div>

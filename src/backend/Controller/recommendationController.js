@@ -20,7 +20,8 @@ export const getRecommendation = async (req, res) => {
     const prompt = `
       You are a professional health and fitness coach.
       User data: ${JSON.stringify(user)}.
-      
+      call user's name in between..for personal touch(or greet )
+      Alo focus on location ....only suggest food that present that particular location you can use name of that location in response
       Provide advice divided into two sections:
       1. Diet: 4 sections - Nutrition Focus, Meal Timing, Hydration, Healthy Habits
       2. Exercise: 4 sections - Training Structure, Rest & Recovery, Cardio Routine, Form & Function
@@ -30,6 +31,8 @@ export const getRecommendation = async (req, res) => {
         "diet": "...",
         "exercise": "..."
       }
+
+      give only 3-5 point of each diet and exercise
     `;
 
     // Call Gemini API
