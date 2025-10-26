@@ -7,12 +7,12 @@ import DashboardPage from "./frontend//Components/Dashboard/DashboardPage";
 // import WithNavbarLayout from './layouts/WithNavbarLayout'
 import ExercisePage from "./frontend//Components/RecommendationPage/ExercisePage.jsx";
 import DietPage from "./frontend/Components/RecommendationPage/DietPage.jsx";
-// import FitnessProfileForm from './frontend/Landing page/form.jsx'
+// import FitnessProfileForm from './frontend/Landingpage/form.jsx'
 
 function App() {
   return (
     <Routes>
-      // LandingPage Route
+     
       <Route
         path="/"
         element={
@@ -22,7 +22,7 @@ function App() {
           </>
         }
       />
-      // User data form Route
+     
       <Route
         path="/form"
         element={
@@ -32,7 +32,7 @@ function App() {
           </>
         }
       />
-      // Dashboard Route
+     
       <Route
         path="/dashboard"
         element={
@@ -41,7 +41,7 @@ function App() {
           </>
         }
       />
-      // Exercise Recommendation Routes
+     
       <Route
         path="/dashboard/Exercise"
         element={
@@ -51,7 +51,7 @@ function App() {
           </>
         }
       />
-      // Diet Recommendation Route
+      
       <Route
         path="/dashboard/Diet"
         element={
