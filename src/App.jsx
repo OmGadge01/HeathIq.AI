@@ -1,7 +1,7 @@
 import { Routes, Route, useNavigate } from "react-router-dom";
-import Userform from "./frontend/Components/Landing page/Userform.jsx";
-import Hero_section from "./frontend//Components/Landing page/hero_section";
-import Navbar from "./frontend//Components/Landing page/Navbar";
+import Userform from "./frontend/Components/Landingpage/Userform.jsx";
+import Hero_section from "./frontend//Components/Landingpage/hero_section";
+import Navbar from "./frontend//Components/Landingpage/Navbar";
 import DashBoardNavbar from "./frontend//Components/Dashboard/DashboardNavbar.jsx";
 import DashboardPage from "./frontend//Components/Dashboard/DashboardPage";
 // import WithNavbarLayout from './layouts/WithNavbarLayout'
@@ -12,7 +12,7 @@ import DietPage from "./frontend/Components/RecommendationPage/DietPage.jsx";
 function App() {
   return (
     <Routes>
-      // Landing Page Route
+      // LandingPage Route
       <Route
         path="/"
         element={
