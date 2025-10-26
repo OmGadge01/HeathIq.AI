@@ -27,7 +27,7 @@ const SectionBlock = ({ title, subtitle, cards, onCardClick }) => (
 
 const ExercisePage = () => {
   const [selectedCard, setSelectedCard] = useState(null);
-  const [aiResponse, setAiResponse] = useState({});
+  const [aiResponse, setAiResponse] = useState({ exerciseLines: [] });
   const [completedLines, setCompletedLines] = useState([]);
   const [currentLine, setCurrentLine] = useState("");
   const [lineIndex, setLineIndex] = useState(0);
@@ -35,68 +35,79 @@ const ExercisePage = () => {
   const [loading, setLoading] = useState(false);
   const notesRef = useRef(null);
 
-  // Example exercise cards and descriptions
   const exerciseCards = [
-    { title: "Training Structure 🏋️‍♀️", description: "Plan your week with structured strength & cardio.", color: "bg-green-100" },
-    { title: "Rest & Recovery 😴", description: "Recover efficiently with sleep and active rest.", color: "bg-red-100" },
-    { title: "Cardio Routine 🚴", description: "Boost stamina and endurance with cardio plans.", color: "bg-yellow-100" },
-    { title: "Form & Function 🎯", description: "Maintain posture and form for safe exercise.", color: "bg-gray-100" },
+    { title: "Training Structure", description: "Plan your week with structured strength & cardio.", color: "bg-green-100" },
+    { title: "Rest & Recovery", description: "Recover efficiently with sleep and active rest.", color: "bg-red-100" },
+    { title: "Cardio Routine", description: "Boost stamina and endurance with cardio plans.", color: "bg-yellow-100" },
+    { title: "Form & Function", description: "Maintain posture and form for safe exercise.", color: "bg-gray-100" },
   ];
 
-  // Static note data for now; later can be replaced with API response
-  const noteData = {
-    "Training Structure 🏋️‍♀️": [
-      "**Consult a Trainer:** Seek expert advice for proper form and structure.",
-      "**Plan Your Week:** Mix cardio, strength, and rest strategically.",
-      "**Monitor Progress:** Use logs or apps to track growth and endurance.",
-    ],
-    "Rest & Recovery 😴": [
-      "**Sleep Matters:** Aim for 7–9 hours of quality sleep.",
-      "**Active Recovery:** Try yoga, walking, or foam rolling.",
-      "**Avoid Overtraining:** Take breaks to prevent burnout or injury.",
-    ],
-    "Cardio Routine 🚴": [
-      "**Start Easy:** Gradually increase pace and time.",
-      "**Mix It Up:** Alternate between HIIT and steady-state.",
-      "**Track Heart Rate:** Use wearables or apps to stay in range.",
-    ],
-    "Form & Function 🎯": [
-      "**Use Mirrors:** Check posture and alignment.",
-      "**Go Slow:** Quality reps > quantity.",
-      "**Warm Up:** Always prepare your body for movement.",
-    ],
-  };
-
-  const handleCardClick = (cardTitle) => {
-    setSelectedCard(cardTitle);
+  const handleCardClick = async (title) => {
+    setSelectedCard(title);
     setCompletedLines([]);
     setCurrentLine("");
     setLineIndex(0);
     setCharIndex(0);
-    setTimeout(() => notesRef.current?.scrollIntoView({ behavior: "smooth" }), 300);
+    setLoading(true);
+
+    try {
+      const userId = localStorage.getItem("userId");
+      if (!userId) throw new Error("User ID not found");
+
+      const res = await fetch("http://localhost:5000/api/recommendation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || "Failed to fetch recommendation");
+      }
+
+      const data = await res.json();
+
+      // Get exercise section and convert to lines
+      let exerciseText =
+        typeof data.exercise === "string" ? data.exercise : JSON.stringify(data.exercise);
+
+      // Remove unwanted characters and emojis
+      exerciseText = exerciseText.replace(/[\{\}\[\]<>\/\\]/g, "").replace(/🏋️‍♀️|😴|🚴|🎯/g, "");
+
+      // Split by card title sections
+      const allLines = exerciseText
+        .split("\n")
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0);
+
+      // Filter lines related to selected card
+      const cardLines = allLines.filter((line) =>
+        line.toLowerCase().includes(title.toLowerCase())
+      );
+
+      setAiResponse({ exerciseLines: cardLines.length > 0 ? cardLines : ["No recommendation available for this section."] });
+    } catch (err) {
+      console.error("Failed to fetch AI recommendation:", err);
+      setAiResponse({ exerciseLines: ["Error fetching recommendation."] });
+    } finally {
+      setLoading(false);
+      setTimeout(() => notesRef.current?.scrollIntoView({ behavior: "smooth" }), 300);
+    }
   };
 
   // Typing animation effect
   useEffect(() => {
-    if (!selectedCard) return;
+    if (!selectedCard || aiResponse.exerciseLines.length === 0) return;
+    if (lineIndex >= aiResponse.exerciseLines.length) return;
 
-    // Match section (ignore emojis and spaces)
-    const matchedKey = Object.keys(noteData).find((key) =>
-      key.toLowerCase().includes(selectedCard.replace(/[\u{1F300}-\u{1F6FF}]/gu, "").trim().toLowerCase())
-    );
-
-    const lines = matchedKey ? noteData[matchedKey] : ["No recommendation available for this section."];
-
-    if (lineIndex >= lines.length) return;
-
-    const currentFullLine = lines[lineIndex];
+    const fullLine = aiResponse.exerciseLines[lineIndex];
 
     const timer = setTimeout(() => {
-      if (charIndex < currentFullLine.length) {
-        setCurrentLine((prev) => prev + currentFullLine[charIndex]);
+      if (charIndex < fullLine.length) {
+        setCurrentLine((prev) => prev + fullLine[charIndex]);
         setCharIndex((prev) => prev + 1);
       } else {
-        setCompletedLines((prev) => [...prev, currentFullLine]);
+        setCompletedLines((prev) => [...prev, fullLine]);
         setCurrentLine("");
         setLineIndex((prev) => prev + 1);
         setCharIndex(0);
@@ -104,7 +115,7 @@ const ExercisePage = () => {
     }, 20);
 
     return () => clearTimeout(timer);
-  }, [charIndex, lineIndex, selectedCard, noteData]);
+  }, [charIndex, lineIndex, selectedCard, aiResponse]);
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-6 sm:px-10">
@@ -120,16 +131,31 @@ const ExercisePage = () => {
         </div>
 
         {/* Cards Section */}
-        <SectionBlock title="Exercise Plan" subtitle="Improve strength, mobility, and endurance with your custom routine." cards={exerciseCards} onCardClick={handleCardClick} />
+        <SectionBlock
+          title="Exercise Plan"
+          subtitle="Improve strength, mobility, and endurance with your custom routine."
+          cards={exerciseCards}
+          onCardClick={handleCardClick}
+        />
 
         {/* Notes Section */}
         {selectedCard && (
-          <div ref={notesRef} className="bg-white rounded-xl p-6 shadow-md mt-10 border border-gray-200 prose max-w-none">
-            <h2 className="text-xl font-bold text-blue-950 mb-4">{selectedCard} – Detailed Notes</h2>
-            {completedLines.map((line, i) => (
-              <ReactMarkdown key={i}>{line}</ReactMarkdown>
+          <div
+            ref={notesRef}
+            className="bg-white rounded-xl p-6 shadow-md mt-10 border border-gray-200 prose prose-sm max-w-none"
+          >
+            <h2 className="text-xl font-bold text-blue-950 mb-4">
+              Recommendation By HealthIQ.AI: {selectedCard}
+            </h2>
+
+            {loading && <p className="text-gray-500">Loading recommendation...</p>}
+
+            {completedLines.map((line, index) => (
+              <p key={index} className="mb-2">
+                {line.startsWith("**") ? <strong>{line.replace(/\*\*/g, "")}</strong> : line}
+              </p>
             ))}
-            {currentLine && <ReactMarkdown>{currentLine}</ReactMarkdown>}
+            {currentLine && <p>{currentLine}</p>}
           </div>
         )}
       </div>
