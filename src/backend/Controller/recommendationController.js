@@ -1,0 +1,55 @@
+import dotenv from 'dotenv';
+import { GoogleGenAI } from '@google/genai';
+import User from '../models/userinfo.js';
+
+dotenv.config();
+
+// Initialize Gemini client
+const client = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY, // Ensure this is set in your .env file
+});
+
+export const getRecommendation = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    if (!userId) return res.status(400).json({ error: 'userId is required' });
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const prompt = `
+      You are a professional health and fitness coach.
+      User data: ${JSON.stringify(user)}.
+      
+      Provide advice divided into two sections:
+      1. Diet: 4 sections - Nutrition Focus, Meal Timing, Hydration, Healthy Habits
+      2. Exercise: 4 sections - Training Structure, Rest & Recovery, Cardio Routine, Form & Function
+      
+      Format strictly as JSON:
+      {
+        "diet": "...",
+        "exercise": "..."
+      }
+    `;
+
+    // Call Gemini API
+    const response = await client.models.generateContent({
+      model: 'gemini-2.5-flash', // Use the appropriate model version
+      contents: prompt,
+    });
+
+    const resultText = response.text;
+
+    let resultJSON;
+    try {
+      resultJSON = JSON.parse(resultText);
+    } catch {
+      resultJSON = { diet: resultText, exercise: resultText };
+    }
+
+    res.json(resultJSON);
+  } catch (err) {
+    console.error('Gemini API error:', err);
+    res.status(500).json({ error: 'Failed to fetch recommendation' });
+  }
+};

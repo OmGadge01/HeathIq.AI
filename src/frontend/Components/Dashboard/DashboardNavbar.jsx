@@ -11,10 +11,10 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex-shrink-0 text-xl font-bold t text-blue-950">Health Dashboard</div>
           <div className="hidden md:flex space-x-4">
-            <Link to="/" className="text-gray-700 hover:text-blue-500">Home</Link>
+            <Link to="/dashboard" className="text-gray-700 hover:text-blue-500">Home</Link>
             <Link to="/profile" className="text-gray-700 hover:text-blue-500">Profile</Link>
-            <Link to="/exercise" className="text-gray-700 hover:text-blue-500">Exercise Plan</Link>
-            <Link to="/diet" className="text-gray-700 hover:text-blue-500">Diet Plan</Link>
+            <Link to="/dashboard/Exercise" className="text-gray-700 hover:text-blue-500">Exercise Plan</Link>
+            <Link to="/dashboard/Diet" className="text-gray-700 hover:text-blue-500">Diet Plan</Link>
             <Link to="/about" className="text-gray-700 hover:text-blue-500">About Us</Link>
             <Link to="/contact" className="text-gray-700 hover:text-blue-500">Contact</Link>
           </div>

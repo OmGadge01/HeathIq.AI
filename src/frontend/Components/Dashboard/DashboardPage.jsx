@@ -1,5 +1,4 @@
 // frontend/Dashboard/DashboardPage.jsx
-import React from 'react';
 import Navbar from './DashboardNavbar';  // relative import from same folder
 import HomePage from './Homepage';
 

@@ -1,15 +1,20 @@
-import { Routes, Route, useNavigate } from 'react-router-dom'
-import Userform from './frontend/Landing page/Userform'
-import Hero_section from './frontend/Landing page/hero_section'
-import Navbar from './frontend/Landing page/Navbar'
-import DashboardPage from './frontend/Dashboard/DashboardPage'
-import WithNavbarLayout from './layouts/WithNavbarLayout'
+import { Routes, Route, useNavigate } from "react-router-dom";
+import Userform from "./frontend/Components/Landing page/Userform.jsx";
+import Hero_section from "./frontend//Components/Landing page/hero_section";
+import Navbar from "./frontend//Components/Landing page/Navbar";
+import DashBoardNavbar from "./frontend//Components/Dashboard/DashboardNavbar.jsx";
+import DashboardPage from "./frontend//Components/Dashboard/DashboardPage";
+// import WithNavbarLayout from './layouts/WithNavbarLayout'
+import ExercisePage from "./frontend//Components/RecommendationPage/ExercisePage.jsx";
+import DietPage from "./frontend/Components/RecommendationPage/DietPage.jsx";
+// import FitnessProfileForm from './frontend/Landing page/form.jsx'
 
-function App () {
+function App() {
   return (
     <Routes>
+      // Landing Page Route
       <Route
-        path='/'
+        path="/"
         element={
           <>
             <Navbar />
@@ -17,8 +22,9 @@ function App () {
           </>
         }
       />
+      // User data form Route
       <Route
-        path='/form'
+        path="/form"
         element={
           <>
             <Navbar />
@@ -26,19 +32,47 @@ function App () {
           </>
         }
       />
-      <Route path='/dashboard' element={<DashboardPage />} />
+      // Dashboard Route
+      <Route
+        path="/dashboard"
+        element={
+          <>
+            <DashboardPage />
+          </>
+        }
+      />
+      // Exercise Recommendation Routes
+      <Route
+        path="/dashboard/Exercise"
+        element={
+          <>
+            <DashBoardNavbar />
+            <ExercisePage />
+          </>
+        }
+      />
+      // Diet Recommendation Route
+      <Route
+        path="/dashboard/Diet"
+        element={
+          <>
+            <DashBoardNavbar />
+            <DietPage />
+          </>
+        }
+      />
     </Routes>
-  )
+  );
 }
 
-function LandingPage () {
-  const navigate = useNavigate()
+function LandingPage() {
+  const navigate = useNavigate();
 
   const handleGetStarted = () => {
-    navigate('/form')
-  }
+    navigate("/form");
+  };
 
-  return <Hero_section onGetStarted={handleGetStarted} />
+  return <Hero_section onGetStarted={handleGetStarted} />;
 }
 
-export default App
+export default App;
