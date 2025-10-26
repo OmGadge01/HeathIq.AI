@@ -35,3 +35,4 @@ A full-stack web application that collects user health data and provides persona
 ## Folder Structure
 
 >>>>>>> 950b927 (Update README.md)
+# HeathIq.AI
