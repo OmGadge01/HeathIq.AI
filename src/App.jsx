@@ -1,12 +1,12 @@
 import { Routes, Route, useNavigate } from "react-router-dom";
-import HealthForm from "../frontend/Components/LandingPage/HealthForm.jsx";
-import Hero_section from "../frontend/Components/Landingpage/hero_section.jsx";
-import Navbar from "../frontend/Components/Landingpage/Navbar.jsx";
-import DashBoardNavbar from "../frontend/Components/Dashboard/DashboardNavbar.jsx";
-import DashboardPage from "../frontend/Components/Dashboard/DashboardPage.jsx";
+import HealthForm from "../frontend/components/LandingPage/HealthForm.jsx";
+import Hero_section from "../frontend/components/Landingpage/hero_section.jsx";
+import Navbar from "../frontend/components/Landingpage/Navbar.jsx";
+import DashBoardNavbar from "../frontend/components/Dashboard/DashboardNavbar.jsx";
+import DashboardPage from "../frontend/components/Dashboard/DashboardPage.jsx";
 // import WithNavbarLayout from './layouts/WithNavbarLayout'
-import ExercisePage from "../frontend/Components/RecommendationPage/ExercisePage.jsx";
-import DietPage from "../frontend/Components/RecommendationPage/DietPage.jsx";
+import ExercisePage from "../frontend/components/RecommendationPage/ExercisePage.jsx";
+import DietPage from "../frontend/components/RecommendationPage/DietPage.jsx";
 // import FitnessProfileForm from './frontend/Landingpage/form.jsx'
 
 function App() {
