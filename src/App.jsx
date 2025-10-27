@@ -1,12 +1,12 @@
 import { Routes, Route, useNavigate } from "react-router-dom";
-import Userform from "./frontend/Components/Landingpage/Userform.jsx";
-import Hero_section from "./frontend//Components/Landingpage/hero_section";
-import Navbar from "./frontend//Components/Landingpage/Navbar";
-import DashBoardNavbar from "./frontend//Components/Dashboard/DashboardNavbar.jsx";
-import DashboardPage from "./frontend//Components/Dashboard/DashboardPage";
+import HealthForm from "../frontend/Components/LandingPage/HealthForm.jsx";
+import Hero_section from "../frontend/Components/Landingpage/hero_section.jsx";
+import Navbar from "../frontend/Components/Landingpage/Navbar.jsx";
+import DashBoardNavbar from "../frontend/Components/Dashboard/DashboardNavbar.jsx";
+import DashboardPage from "../frontend/Components/Dashboard/DashboardPage.jsx";
 // import WithNavbarLayout from './layouts/WithNavbarLayout'
-import ExercisePage from "./frontend//Components/RecommendationPage/ExercisePage.jsx";
-import DietPage from "./frontend/Components/RecommendationPage/DietPage.jsx";
+import ExercisePage from "../frontend/Components/RecommendationPage/ExercisePage.jsx";
+import DietPage from "../frontend/Components/RecommendationPage/DietPage.jsx";
 // import FitnessProfileForm from './frontend/Landingpage/form.jsx'
 
 function App() {
@@ -28,7 +28,7 @@ function App() {
         element={
           <>
             <Navbar />
-            <Userform />
+            <HealthForm />
           </>
         }
       />
