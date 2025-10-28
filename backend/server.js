@@ -10,16 +10,16 @@ dotenv.config();
 const app = express();
 
 // Middleware
+const cors = require("cors");
+
 app.use(
   cors({
-    origin: [
-      "https://healthiq-three.vercel.app", 
-      "http://localhost:5173" 
-    ],
-    methods: ["GET", "POST"],
+    origin: ["https://healthiqai.vercel.app/"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
+
 
 app.use(express.json());
 

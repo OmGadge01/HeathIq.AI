@@ -93,6 +93,7 @@ const HealthForm = () => {
       if (res.ok) {
         alert(data.message);
 
+        // ✅ Save userId to localStorage for later use (recommendation)
         if (data.user && data.user._id) {
           localStorage.setItem("userId", data.user._id);
           console.log("User ID saved:", data.user._id);
@@ -100,7 +101,7 @@ const HealthForm = () => {
           console.warn("User ID not found in response:", data);
         }
 
-        //  Reset form and navigate
+        // ✅ Reset form and navigate
         setForm({
           name: "",
           email: "",

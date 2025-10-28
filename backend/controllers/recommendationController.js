@@ -6,7 +6,7 @@ dotenv.config();
 
 // Initialize Gemini client
 const client = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY, // Ensure this is set in your .env file
+  apiKey: process.env.GEMINI_API_KEY, 
 });
 
 export const getRecommendation = async (req, res) => {
