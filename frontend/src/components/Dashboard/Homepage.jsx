@@ -9,11 +9,17 @@ import {
   YAxis,
   ResponsiveContainer,
   Legend,
-} from 'recharts';
-import { User, Activity, Droplet, Flame, Heart, Coffee, Smile } from 'lucide-react';
+} from "recharts";
+import {
+  User,
+  Activity,
+  Droplet,
+  Flame,
+  Heart,
+  Coffee,
+  Smile,
+} from "lucide-react";
 import React, { useState, useEffect } from "react";
-
-
 
 // const dummyUserData = {
 //   name: "John Doe",
@@ -37,13 +43,23 @@ import React, { useState, useEffect } from "react";
 //   location: "New York, USA",
 // };
 
-const COLORS = ['#4ade80', '#3b82f6', '#f97316', '#f87171', '#eab308', '#8b5cf6'];
+const COLORS = [
+  "#4ade80",
+  "#3b82f6",
+  "#f97316",
+  "#f87171",
+  "#eab308",
+  "#8b5cf6",
+];
 
 const UserDashboard = () => {
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/users")
+    const API_BASE = import.meta.env.VITE_API_BASE_URL;
+    console.log("Using API:", API_BASE); // ✅ Add this temporarily
+
+    fetch(`${API_BASE}/api/users`)
       .then((res) => res.json())
       .then((data) => {
         if (data.length > 0) {
@@ -58,38 +74,25 @@ const UserDashboard = () => {
   }
 
   // 👇 Use fetched userData here
-  const exerciseTypeData = [
-    { name: userData.exerciseType, value: 100 },
-  ];
+  const exerciseTypeData = [{ name: userData.exerciseType, value: 100 }];
 
-  const mealTypeData = [
-    { name: userData.mealType, value: 100 },
-  ];
+  const mealTypeData = [{ name: userData.mealType, value: 100 }];
 
-  const alcoholData = [
-    { name: userData.alcohol, value: 100 },
-  ];
+  const alcoholData = [{ name: userData.alcohol, value: 100 }];
 
-  const smokingData = [
-    { name: userData.smoking ? "Yes" : "No", value: 100 },
-  ];
+  const smokingData = [{ name: userData.smoking ? "Yes" : "No", value: 100 }];
 
-  const snacksData = [
-    { name: userData.snacksFrequency, value: 100 },
-  ];
+  const snacksData = [{ name: userData.snacksFrequency, value: 100 }];
 
-  const sugarData = [
-    { name: userData.sugarIntake, value: 100 },
-  ];
+  const sugarData = [{ name: userData.sugarIntake, value: 100 }];
 
-  const stressData = [
-    { name: "Stress Level", value: userData.stress },
-  ];
-
+  const stressData = [{ name: "Stress Level", value: userData.stress }];
 
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-8">
-      <h1 className="text-3xl font-bold mb-4">Health Dashboard for {userData.name}</h1>
+      <h1 className="text-3xl font-bold mb-4">
+        Health Dashboard for {userData.name}
+      </h1>
 
       {/* Personal Info Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -113,7 +116,9 @@ const UserDashboard = () => {
           <Activity className="text-green-500" size={36} />
           <div>
             <p className="text-gray-500 text-sm">Exercise Frequency</p>
-            <p className="text-lg font-semibold">{userData.exerciseFrequency}</p>
+            <p className="text-lg font-semibold">
+              {userData.exerciseFrequency}
+            </p>
           </div>
         </div>
 
@@ -148,7 +153,9 @@ const UserDashboard = () => {
           <Droplet className="text-blue-500" size={36} />
           <div>
             <p className="text-gray-500 text-sm">Water Intake</p>
-            <p className="text-lg font-semibold">{userData.waterIntake} liters/day</p>
+            <p className="text-lg font-semibold">
+              {userData.waterIntake} liters/day
+            </p>
           </div>
         </div>
 
@@ -156,7 +163,9 @@ const UserDashboard = () => {
           <Heart className="text-pink-500" size={36} />
           <div>
             <p className="text-gray-500 text-sm">Sleep</p>
-            <p className="text-lg font-semibold">{userData.sleep} hours/night</p>
+            <p className="text-lg font-semibold">
+              {userData.sleep} hours/night
+            </p>
           </div>
         </div>
       </div>
@@ -182,7 +191,10 @@ const UserDashboard = () => {
                 label
               >
                 {alcoholData.map((entry, index) => (
-                  <Cell key={`cell-alcohol-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell
+                    key={`cell-alcohol-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
                 ))}
               </Pie>
               <Tooltip />
@@ -209,7 +221,10 @@ const UserDashboard = () => {
                 label
               >
                 {smokingData.map((entry, index) => (
-                  <Cell key={`cell-smoking-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell
+                    key={`cell-smoking-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
                 ))}
               </Pie>
               <Tooltip />
@@ -233,7 +248,10 @@ const UserDashboard = () => {
                 label
               >
                 {snacksData.map((entry, index) => (
-                  <Cell key={`cell-snacks-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell
+                    key={`cell-snacks-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
                 ))}
               </Pie>
               <Tooltip />
@@ -265,4 +283,3 @@ const UserDashboard = () => {
 };
 
 export default UserDashboard;
-
