@@ -73,69 +73,71 @@ const HealthForm = () => {
     setErrors({ ...errors, [field]: error });
   };
 
-const handleSubmit = async () => {
-  if (Object.values(errors).some((err) => err)) {
-    alert("Please fix the errors before submitting");
-    return;
-  }
-
-  try {
-    const res = await fetch("http://localhost:5000/api/submit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-      alert(data.message);
-
-      // ✅ Save userId to localStorage for later use (recommendation)
-      if (data.user && data.user._id) {
-        localStorage.setItem("userId", data.user._id);
-        console.log("User ID saved:", data.user._id);
-      } else {
-        console.warn("User ID not found in response:", data);
-      }
-
-      // ✅ Reset form and navigate
-      setForm({
-        name: "",
-        email: "",
-        age: "",
-        gender: "",
-        height: "",
-        weight: "",
-        mealType: "",
-        dailyMeals: "",
-        snacksFrequency: "",
-        sugarIntake: "",
-        location: "",
-        sleep: 7,
-        exerciseFrequency: "",
-        exerciseType: "",
-        waterIntake: "",
-        allergies: "",
-        alcohol: "",
-        smoking: false,
-        stress: 5,
-      });
-      setErrors({});
-      navigate("/dashboard");
-    } else {
-      console.error("Error saving user:", data);
-      alert("Error saving user: " + (data.error || data.message));
+  const handleSubmit = async () => {
+    if (Object.values(errors).some((err) => err)) {
+      alert("Please fix the errors before submitting");
+      return;
     }
-  } catch (err) {
-    console.error("Error submitting form:", err);
-    alert("Error submitting form");
-  }
-};
 
+    try {
+      const API_BASE =
+        import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+      const res = await fetch(`${API_BASE}/api/submit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert(data.message);
+
+        // ✅ Save userId to localStorage for later use (recommendation)
+        if (data.user && data.user._id) {
+          localStorage.setItem("userId", data.user._id);
+          console.log("User ID saved:", data.user._id);
+        } else {
+          console.warn("User ID not found in response:", data);
+        }
+
+        // ✅ Reset form and navigate
+        setForm({
+          name: "",
+          email: "",
+          age: "",
+          gender: "",
+          height: "",
+          weight: "",
+          mealType: "",
+          dailyMeals: "",
+          snacksFrequency: "",
+          sugarIntake: "",
+          location: "",
+          sleep: 7,
+          exerciseFrequency: "",
+          exerciseType: "",
+          waterIntake: "",
+          allergies: "",
+          alcohol: "",
+          smoking: false,
+          stress: 5,
+        });
+        setErrors({});
+        navigate("/dashboard");
+      } else {
+        console.error("Error saving user:", data);
+        alert("Error saving user: " + (data.error || data.message));
+      }
+    } catch (err) {
+      console.error("Error submitting form:", err);
+      alert("Error submitting form");
+    }
+  };
 
   const nextSection = () => {
-    if (currentSection < sections.length - 1) setCurrentSection(currentSection + 1);
+    if (currentSection < sections.length - 1)
+      setCurrentSection(currentSection + 1);
   };
 
   const prevSection = () => {
@@ -157,7 +159,9 @@ const handleSubmit = async () => {
       <div className="max-w-4xl w-full bg-white shadow-2xl rounded-3xl overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-green-600 p-8 text-white text-center">
-          <h1 className="text-4xl font-extrabold mb-2">🏥 Health & Wellness Survey</h1>
+          <h1 className="text-4xl font-extrabold mb-2">
+            🏥 Health & Wellness Survey
+          </h1>
           <p className="text-lg opacity-90">Let's build a healthier you!</p>
         </div>
 
@@ -168,25 +172,34 @@ const handleSubmit = async () => {
               <div key={index} className="flex items-center">
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                    index <= currentSection ? "bg-green-500 text-white" : "bg-gray-300 text-gray-600"
+                    index <= currentSection
+                      ? "bg-green-500 text-white"
+                      : "bg-gray-300 text-gray-600"
                   }`}
                 >
-                  {index < currentSection ? <CheckCircleIcon className="w-5 h-5" /> : index + 1}
+                  {index < currentSection ? (
+                    <CheckCircleIcon className="w-5 h-5" />
+                  ) : (
+                    index + 1
+                  )}
                 </div>
                 {index < sections.length - 1 && (
-                  <div className={`w-16 h-1 mx-2 ${index < currentSection ? "bg-green-500" : "bg-gray-300"}`}></div>
+                  <div
+                    className={`w-16 h-1 mx-2 ${
+                      index < currentSection ? "bg-green-500" : "bg-gray-300"
+                    }`}
+                  ></div>
                 )}
               </div>
             ))}
           </div>
-          <p className="text-center text-gray-600 font-medium">{sections[currentSection]}</p>
+          <p className="text-center text-gray-600 font-medium">
+            {sections[currentSection]}
+          </p>
         </div>
 
         {/* Form */}
-        <form
-          onSubmit={(e) => e.preventDefault()}
-          className="p-8 space-y-8"
-        >
+        <form onSubmit={(e) => e.preventDefault()} className="p-8 space-y-8">
           {/* Personal Info */}
           {currentSection === 0 && (
             <section className="animate-fade-in">
@@ -200,10 +213,14 @@ const handleSubmit = async () => {
                     value={form.name}
                     onChange={(e) => handleChange("name", e.target.value)}
                     className={`w-full pl-10 p-4 rounded-xl border-2 ${
-                      errors.name ? "border-red-500" : "border-gray-300 group-hover:border-blue-400"
+                      errors.name
+                        ? "border-red-500"
+                        : "border-gray-300 group-hover:border-blue-400"
                     } focus:ring-4 focus:ring-blue-200 focus:outline-none transition-all duration-300`}
                   />
-                  {errors.name && <p className="text-red-500 mt-2 text-sm">{errors.name}</p>}
+                  {errors.name && (
+                    <p className="text-red-500 mt-2 text-sm">{errors.name}</p>
+                  )}
                 </div>
                 {/* Email */}
                 <div className="relative group">
@@ -214,10 +231,14 @@ const handleSubmit = async () => {
                     value={form.email}
                     onChange={(e) => handleChange("email", e.target.value)}
                     className={`w-full pl-10 p-4 rounded-xl border-2 ${
-                      errors.email ? "border-red-500" : "border-gray-300 group-hover:border-blue-400"
+                      errors.email
+                        ? "border-red-500"
+                        : "border-gray-300 group-hover:border-blue-400"
                     } focus:ring-4 focus:ring-blue-200 focus:outline-none transition-all duration-300`}
                   />
-                  {errors.email && <p className="text-red-500 mt-2 text-sm">{errors.email}</p>}
+                  {errors.email && (
+                    <p className="text-red-500 mt-2 text-sm">{errors.email}</p>
+                  )}
                 </div>
                 {/* Age */}
                 <div className="relative group">
@@ -309,7 +330,9 @@ const handleSubmit = async () => {
                 <ExclamationTriangleIcon className="w-5 h-5 absolute top-3 left-3 text-yellow-400 group-hover:text-yellow-600 transition-colors" />
                 <select
                   value={form.snacksFrequency}
-                  onChange={(e) => handleChange("snacksFrequency", e.target.value)}
+                  onChange={(e) =>
+                    handleChange("snacksFrequency", e.target.value)
+                  }
                   className="w-full pl-10 p-4 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-yellow-200 focus:outline-none group-hover:border-yellow-400 transition-all duration-300"
                 >
                   <option value="">Snacking Frequency</option>
@@ -357,7 +380,8 @@ const handleSubmit = async () => {
                   className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
                 />
                 <div className="text-center mt-3 text-lg font-bold text-gray-800">
-                  {form.sleep} hrs {form.sleep < 6 ? "😴" : form.sleep < 8 ? "😐" : "😊"}
+                  {form.sleep} hrs{" "}
+                  {form.sleep < 6 ? "😴" : form.sleep < 8 ? "😐" : "😊"}
                 </div>
               </div>
             </section>
