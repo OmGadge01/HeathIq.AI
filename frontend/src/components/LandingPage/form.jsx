@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-// import { Button } from "../../components/ui/button"; // or just use <button> if this causes issues
 import { HeartPulse, User, Weight, Calendar, Dumbbell, Activity } from "lucide-react";
 
 const FitnessProfileForm = () => {

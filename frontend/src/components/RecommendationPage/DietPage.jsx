@@ -36,22 +36,26 @@ const DietPage = () => {
   const dietCards = [
     {
       title: "Nutrition Focus",
-      description: "Choose foods that fuel your body and mind for peak performance.",
+      description:
+        "Choose foods that fuel your body and mind for peak performance.",
       color: "bg-blue-100",
     },
     {
       title: "Meal Timing",
-      description: "Structure your meals to support energy, digestion, and recovery.",
+      description:
+        "Structure your meals to support energy, digestion, and recovery.",
       color: "bg-pink-100",
     },
     {
       title: "Hydration",
-      description: "Stay energized and balanced with optimal water intake daily.",
+      description:
+        "Stay energized and balanced with optimal water intake daily.",
       color: "bg-yellow-100",
     },
     {
       title: "Healthy Habits",
-      description: "Build consistent routines to support long-term nutrition goals.",
+      description:
+        "Build consistent routines to support long-term nutrition goals.",
       color: "bg-gray-100",
     },
   ];
@@ -68,11 +72,14 @@ const DietPage = () => {
       const userId = localStorage.getItem("userId");
       if (!userId) throw new Error("User ID not found");
 
-      const res = await fetch("http://localhost:5000/api/recommendation", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId }),
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/recommendation`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId }),
+        }
+      );
 
       if (!res.ok) {
         const errData = await res.json();
@@ -84,7 +91,9 @@ const DietPage = () => {
       // Remove unwanted characters and emojis
       let dietText =
         typeof data.diet === "string" ? data.diet : JSON.stringify(data.diet);
-      dietText = dietText.replace(/[\{\}\[\]<>\/\\]/g, "").replace(/🍽️|🕒|💧|🌿/g, "");
+      dietText = dietText
+        .replace(/[\{\}\[\]<>\/\\]/g, "")
+        .replace(/🍽️|🕒|💧|🌿/g, "");
 
       const dietLines = dietText
         .split("\n")
@@ -97,7 +106,10 @@ const DietPage = () => {
       setAiResponse({ dietLines: ["Error fetching recommendation."] });
     } finally {
       setLoading(false);
-      setTimeout(() => notesRef.current?.scrollIntoView({ behavior: "smooth" }), 300);
+      setTimeout(
+        () => notesRef.current?.scrollIntoView({ behavior: "smooth" }),
+        300
+      );
     }
   };
 
@@ -154,7 +166,9 @@ const DietPage = () => {
               Recommendation By HealthIQ.AI: {selectedCard}
             </h2>
 
-            {loading && <p className="text-gray-500">Loading recommendation...</p>}
+            {loading && (
+              <p className="text-gray-500">Loading recommendation...</p>
+            )}
 
             {completedLines.map((line, index) => (
               <p key={index} className="mb-2">
