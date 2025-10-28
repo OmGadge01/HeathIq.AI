@@ -21,28 +21,6 @@ import {
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 
-// const dummyUserData = {
-//   name: "John Doe",
-//   email: "john@example.com",
-//   age: 32,
-//   gender: "Male",
-//   height: 175, // cm
-//   weight: 78, // kg
-//   sleep: 6.5, // hours
-//   exerciseFrequency: "3-4 times/week",
-//   exerciseType: "Weightlifting",
-//   waterIntake: 2.2, // liters
-//   allergies: "None",
-//   alcohol: "Social",
-//   smoking: false,
-//   stress: 4, // scale 1-10
-//   mealType: "Balanced",
-//   dailyMeals: 3,
-//   snacksFrequency: "Occasionally",
-//   sugarIntake: "Moderate",
-//   location: "New York, USA",
-// };
-
 const COLORS = [
   "#4ade80",
   "#3b82f6",
@@ -55,24 +33,10 @@ const COLORS = [
 const UserDashboard = () => {
   const [userData, setUserData] = useState(null);
 
-<<<<<<< HEAD
   useEffect(() => {
-    const API_BASE = import.meta.env.VITE_API_BASE_URL;
-    console.log("Using API:", API_BASE); // ✅ Add this temporarily
-
-    fetch(`${API_BASE}/api/users`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.length > 0) {
-          setUserData(data[0]);
-        }
-      })
-      .catch((err) => console.error("Failed to fetch user data:", err));
-  }, []);
-=======
   const API_BASE = import.meta.env.VITE_API_BASE_URL;
+  console.log("Using API:", API_BASE); // ✅ Add this temporarily
 
-  
   fetch(`${API_BASE}/api/users`)
     .then((res) => res.json())
     .then((data) => {
@@ -82,13 +46,13 @@ const UserDashboard = () => {
     })
     .catch((err) => console.error("Failed to fetch user data:", err));
 }, []);
->>>>>>> 12ffbc9ebf4c08fabea4872f8e215279ea3e62e0
+
 
   if (!userData) {
     return <div className="p-6 text-lg">Loading user data...</div>;
   }
 
-  // 👇 Use fetched userData here
+  // Use fetched userData here
   const exerciseTypeData = [{ name: userData.exerciseType, value: 100 }];
 
   const mealTypeData = [{ name: userData.mealType, value: 100 }];

@@ -53,12 +53,13 @@ const ExercisePage = () => {
     try {
       const userId = localStorage.getItem("userId");
       if (!userId) throw new Error("User ID not found");
-
-      const res = await fetch("http://localhost:5000/api/recommendation", {
+      const API_BASE = import.meta.env.VITE_API_BASE_URL;
+      const res = await fetch(`${API_BASE}/api/recommendation`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId }),
       });
+
 
       if (!res.ok) {
         const errData = await res.json();
