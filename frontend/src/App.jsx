@@ -1,7 +1,7 @@
 import { Routes, Route, useNavigate } from "react-router-dom";
 import HealthForm from "./components/LandingPage/HealthForm.jsx";
 import Hero_section from "./components/Landingpage/Hero_section.jsx";
-import Navbar from "./components/Landingpage/Navbar.jsx";
+import Navbar from "./components/LandingPage/Navbar.jsx";
 import DashBoardNavbar from "./components/Dashboard/DashboardNavbar.jsx";
 import DashboardPage from "./components/Dashboard/DashboardPage.jsx";
 import ExercisePage from "./components/RecommendationPage/ExercisePage.jsx";
