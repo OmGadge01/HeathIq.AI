@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 
-// Reusable Card Component
+// 🔹 Reusable Card Component
 const ExerciseCard = ({ title, description, color, onClick }) => (
   <div
     onClick={onClick}
@@ -12,7 +12,7 @@ const ExerciseCard = ({ title, description, color, onClick }) => (
   </div>
 );
 
-// Section Block
+// 🔹 Section Block
 const SectionBlock = ({ title, subtitle, cards, onCardClick }) => (
   <div className="bg-[#597ea8] p-6 rounded-xl shadow-md">
     <h2 className="text-2xl font-bold mb-1 text-black">{title}</h2>
@@ -35,6 +35,7 @@ const ExercisePage = () => {
   const [loading, setLoading] = useState(false);
   const notesRef = useRef(null);
 
+  // 🔹 Exercise category cards
   const exerciseCards = [
     { title: "Training Structure", description: "Plan your week with structured strength & cardio.", color: "bg-green-100" },
     { title: "Rest & Recovery", description: "Recover efficiently with sleep and active rest.", color: "bg-red-100" },
@@ -42,6 +43,7 @@ const ExercisePage = () => {
     { title: "Form & Function", description: "Maintain posture and form for safe exercise.", color: "bg-gray-100" },
   ];
 
+  // 🔹 Handle card click — fetch personalized recommendations
   const handleCardClick = async (title) => {
     setSelectedCard(title);
     setCompletedLines([]);
@@ -53,13 +55,13 @@ const ExercisePage = () => {
     try {
       const userId = localStorage.getItem("userId");
       if (!userId) throw new Error("User ID not found");
+
       const API_BASE = import.meta.env.VITE_API_BASE_URL;
       const res = await fetch(`${API_BASE}/api/recommendation`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId }),
       });
-
 
       if (!res.ok) {
         const errData = await res.json();
@@ -68,25 +70,30 @@ const ExercisePage = () => {
 
       const data = await res.json();
 
-      // Get exercise section and convert to lines
+      // Extract & clean exercise plan text
       let exerciseText =
         typeof data.exercise === "string" ? data.exercise : JSON.stringify(data.exercise);
 
-      // Remove unwanted characters and emojis
-      exerciseText = exerciseText.replace(/[\{\}\[\]<>\/\\]/g, "").replace(/🏋️‍♀️|😴|🚴|🎯/g, "");
+      // Clean up unwanted characters & emojis
+      exerciseText = exerciseText
+        .replace(/[\{\}\[\]<>\/\\]/g, "")
+        .replace(/🏋️‍♀️|😴|🚴|🎯/g, "")
+        .replace(/\\n|n/g, "\n");
 
-      // Split by card title sections
+      // Split text into meaningful lines
       const allLines = exerciseText
         .split("\n")
         .map((line) => line.trim())
         .filter((line) => line.length > 0);
 
-      // Filter lines related to selected card
+      // Filter for selected card section
       const cardLines = allLines.filter((line) =>
         line.toLowerCase().includes(title.toLowerCase())
       );
 
-      setAiResponse({ exerciseLines: cardLines.length > 0 ? cardLines : ["No recommendation available for this section."] });
+      setAiResponse({
+        exerciseLines: cardLines.length > 0 ? cardLines : ["No recommendation available for this section."],
+      });
     } catch (err) {
       console.error("Failed to fetch AI recommendation:", err);
       setAiResponse({ exerciseLines: ["Error fetching recommendation."] });
@@ -96,13 +103,12 @@ const ExercisePage = () => {
     }
   };
 
-  // Typing animation effect
+  // 🔹 Typing animation
   useEffect(() => {
     if (!selectedCard || aiResponse.exerciseLines.length === 0) return;
     if (lineIndex >= aiResponse.exerciseLines.length) return;
 
     const fullLine = aiResponse.exerciseLines[lineIndex];
-
     const timer = setTimeout(() => {
       if (charIndex < fullLine.length) {
         setCurrentLine((prev) => prev + fullLine[charIndex]);
@@ -118,6 +124,7 @@ const ExercisePage = () => {
     return () => clearTimeout(timer);
   }, [charIndex, lineIndex, selectedCard, aiResponse]);
 
+  // 🔹 Render UI
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-6 sm:px-10">
       <div className="max-w-6xl mx-auto space-y-12">
@@ -131,7 +138,7 @@ const ExercisePage = () => {
           </p>
         </div>
 
-        {/* Cards Section */}
+        {/* Exercise Section */}
         <SectionBlock
           title="Exercise Plan"
           subtitle="Improve strength, mobility, and endurance with your custom routine."
@@ -139,7 +146,7 @@ const ExercisePage = () => {
           onCardClick={handleCardClick}
         />
 
-        {/* Notes Section */}
+        {/* AI Notes Section */}
         {selectedCard && (
           <div
             ref={notesRef}
@@ -152,11 +159,31 @@ const ExercisePage = () => {
             {loading && <p className="text-gray-500">Loading recommendation...</p>}
 
             {completedLines.map((line, index) => (
-              <p key={index} className="mb-2">
-                {line.startsWith("**") ? <strong>{line.replace(/\*\*/g, "")}</strong> : line}
-              </p>
+              <ReactMarkdown
+                key={index}
+                className="prose prose-sm text-gray-800 mb-3"
+                components={{
+                  h3: ({ node, ...props }) => (
+                    <h3 className="text-lg font-semibold text-blue-800 mt-4 mb-2" {...props} />
+                  ),
+                  strong: ({ node, ...props }) => (
+                    <strong className="text-gray-900 font-bold" {...props} />
+                  ),
+                  ul: ({ node, ...props }) => (
+                    <ul className="list-disc ml-6 space-y-1" {...props} />
+                  ),
+                  p: ({ node, ...props }) => <p className="mb-2" {...props} />,
+                }}
+              >
+                {line.replace(/\\n|n/g, "\n")}
+              </ReactMarkdown>
             ))}
-            {currentLine && <p>{currentLine}</p>}
+
+            {currentLine && (
+              <ReactMarkdown className="prose prose-sm text-gray-800">
+                {currentLine.replace(/\\n|n/g, "\n")}
+              </ReactMarkdown>
+            )}
           </div>
         )}
       </div>
