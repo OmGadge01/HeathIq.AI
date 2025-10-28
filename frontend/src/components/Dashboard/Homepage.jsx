@@ -55,6 +55,7 @@ const COLORS = [
 const UserDashboard = () => {
   const [userData, setUserData] = useState(null);
 
+<<<<<<< HEAD
   useEffect(() => {
     const API_BASE = import.meta.env.VITE_API_BASE_URL;
     console.log("Using API:", API_BASE); // ✅ Add this temporarily
@@ -68,6 +69,20 @@ const UserDashboard = () => {
       })
       .catch((err) => console.error("Failed to fetch user data:", err));
   }, []);
+=======
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
+  
+  fetch(`${API_BASE}/api/users`)
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.length > 0) {
+        setUserData(data[0]);
+      }
+    })
+    .catch((err) => console.error("Failed to fetch user data:", err));
+}, []);
+>>>>>>> 12ffbc9ebf4c08fabea4872f8e215279ea3e62e0
 
   if (!userData) {
     return <div className="p-6 text-lg">Loading user data...</div>;
