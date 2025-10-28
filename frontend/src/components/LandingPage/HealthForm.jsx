@@ -81,7 +81,7 @@ const HealthForm = () => {
 
     try {
       const API_BASE =
-        import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+        import.meta.env.VITE_API_BASE_URL;
       const res = await fetch(`${API_BASE}/api/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

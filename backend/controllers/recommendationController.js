@@ -37,7 +37,7 @@ export const getRecommendation = async (req, res) => {
 
     // Call Gemini API
     const response = await client.models.generateContent({
-      model: 'gemini-2.5-flash', // Use the appropriate model version
+      model: 'gemini-2.5-flash', 
       contents: prompt,
     });
 

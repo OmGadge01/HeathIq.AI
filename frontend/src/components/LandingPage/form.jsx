@@ -34,7 +34,6 @@ const FitnessProfileForm = () => {
     e.preventDefault();
     if (validate()) {
       alert("Form submitted!");
-      // handle form data
     }
   };
 
@@ -65,6 +64,7 @@ const FitnessProfileForm = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
+          
           {/* Height */}
           <div>
             <label className="block text-blue-800 font-medium mb-1 flex items-center gap-1">
