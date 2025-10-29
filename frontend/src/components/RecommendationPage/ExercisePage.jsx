@@ -1,188 +1,103 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 
-const ExerciseCard = ({ title, description, color, onClick }) => (
-  <div
-    onClick={onClick}
-    className={`rounded-xl p-5 shadow-md transition-transform duration-300 transform hover:scale-105 cursor-pointer ${color} relative min-h-[140px]`}
-  >
-    <h3 className="text-lg font-semibold mb-1">{title}</h3>
-    <p className="text-sm text-gray-700">{description}</p>
-  </div>
-);
-
-
-const SectionBlock = ({ title, subtitle, cards, onCardClick }) => (
-  <div className="bg-[#597ea8] p-6 rounded-xl shadow-md">
-    <h2 className="text-2xl font-bold mb-1 text-black">{title}</h2>
-    <p className="text-gray-100 mb-5">{subtitle}</p>
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      {cards.map((card, i) => (
-        <ExerciseCard key={i} {...card} onClick={() => onCardClick(card.title)} />
-      ))}
-    </div>
-  </div>
-);
-
 const ExercisePage = () => {
+  const [exerciseText, setExerciseText] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
-  const [aiResponse, setAiResponse] = useState({ exerciseLines: [] });
-  const [completedLines, setCompletedLines] = useState([]);
-  const [currentLine, setCurrentLine] = useState("");
-  const [lineIndex, setLineIndex] = useState(0);
-  const [charIndex, setCharIndex] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const notesRef = useRef(null);
 
-  const exerciseCards = [
-    { title: "Training Structure", description: "Plan your week with structured strength & cardio.", color: "bg-green-100" },
-    { title: "Rest & Recovery", description: "Recover efficiently with sleep and active rest.", color: "bg-red-100" },
-    { title: "Cardio Routine", description: "Boost stamina and endurance with cardio plans.", color: "bg-yellow-100" },
-    { title: "Form & Function", description: "Maintain posture and form for safe exercise.", color: "bg-gray-100" },
-  ];
-
-  
-  const handleCardClick = async (title) => {
-    setSelectedCard(title);
-    setCompletedLines([]);
-    setCurrentLine("");
-    setLineIndex(0);
-    setCharIndex(0);
-    setLoading(true);
+  const handleCardClick = async (category) => {
+    setSelectedCard(category);
+    setIsLoading(true);
 
     try {
-      const userId = localStorage.getItem("userId");
-      if (!userId) throw new Error("User ID not found");
-
-      const API_BASE = import.meta.env.VITE_API_BASE_URL;
-      const res = await fetch(`${API_BASE}/api/recommendation`, {
+      const res = await fetch("https://heathiq-ai.onrender.com/api/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId }),
+        body: JSON.stringify({ type: "exercise", category }),
       });
-
-      if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.error || "Failed to fetch recommendation");
-      }
 
       const data = await res.json();
+      let text = data.exercise || "No response from AI.";
 
-      
-      let exerciseText =
-        typeof data.exercise === "string" ? data.exercise : JSON.stringify(data.exercise);
+      // 🧹 Clean messy AI text
+      text = text
+        .replace(/\\n/g, "\n")
+        .replace(/\\t/g, " ")
+        .replace(/\\"/g, '"')
+        .replace(/\\'/g, "'")
+        .replace(/```/g, "")
+        .replace(/recommendation\s*by\s*HealthIQ\.AI[:\-]*/gi, "")
+        .trim();
 
-      
-      exerciseText = exerciseText
-        .replace(/[\{\}\"\'\[\]<>\"\"json"\/\\]/g, "")
-        // .replace(/🏋️‍♀️|😴|🚴|🎯/g, "")
-        .replace(/\\n|n/g, "\n");
-
-      
-      const allLines = exerciseText
-        .split("\n")
-        .map((line) => line.trim())
-        .filter((line) => line.length > 0);
-
- 
-      const cardLines = allLines.filter((line) =>
-        line.toLowerCase().includes(title.toLowerCase())
-      );
-
-      setAiResponse({
-        exerciseLines: cardLines.length > 0 ? cardLines : ["No recommendation available for this section."],
-      });
+      setExerciseText(text);
     } catch (err) {
-      console.error("Failed to fetch AI recommendation:", err);
-      setAiResponse({ exerciseLines: ["Error fetching recommendation."] });
+      console.error("Error fetching AI data:", err);
+      setExerciseText("Failed to fetch AI response. Please try again later.");
     } finally {
-      setLoading(false);
-      setTimeout(() => notesRef.current?.scrollIntoView({ behavior: "smooth" }), 300);
+      setIsLoading(false);
     }
   };
 
-  
-  useEffect(() => {
-    if (!selectedCard || aiResponse.exerciseLines.length === 0) return;
-    if (lineIndex >= aiResponse.exerciseLines.length) return;
+  const cards = [
+    {
+      title: "Weight Loss",
+      desc: "AI-tailored workouts to burn fat and build stamina effectively.",
+      color: "bg-blue-50 hover:bg-blue-100",
+    },
+    {
+      title: "Muscle Gain",
+      desc: "Structured strength training to enhance muscle mass safely.",
+      color: "bg-green-50 hover:bg-green-100",
+    },
+    {
+      title: "Flexibility",
+      desc: "Daily stretching and yoga-based routines for body agility.",
+      color: "bg-yellow-50 hover:bg-yellow-100",
+    },
+  ];
 
-    const fullLine = aiResponse.exerciseLines[lineIndex];
-    const timer = setTimeout(() => {
-      if (charIndex < fullLine.length) {
-        setCurrentLine((prev) => prev + fullLine[charIndex]);
-        setCharIndex((prev) => prev + 1);
-      } else {
-        setCompletedLines((prev) => [...prev, fullLine]);
-        setCurrentLine("");
-        setLineIndex((prev) => prev + 1);
-        setCharIndex(0);
-      }
-    }, 20);
-
-    return () => clearTimeout(timer);
-  }, [charIndex, lineIndex, selectedCard, aiResponse]);
-
-  
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-6 sm:px-10">
-      <div className="max-w-6xl mx-auto space-y-12">
-        {/* Header */}
-        <div className="text-center">
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 font-sans">
-            Your Personalized Exercise Plan
-          </h1>
-          <p className="mt-4 text-gray-600 text-lg max-w-2xl mx-auto">
-            Smart, efficient workouts designed for performance and recovery.
-          </p>
-        </div>
+    <div className="min-h-screen bg-gray-50 py-10 px-6">
+      <h1 className="text-3xl font-bold text-blue-950 mb-6 text-center">
+        Exercise Recommendations
+      </h1>
 
-        {/* Exercise Section */}
-        <SectionBlock
-          title="Exercise Plan"
-          subtitle="Improve strength, mobility, and endurance with your custom routine."
-          cards={exerciseCards}
-          onCardClick={handleCardClick}
-        />
-
-        {/* AI Notes Section */}
-        {selectedCard && (
+      {/* --- Exercise Category Cards --- */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-5xl mx-auto mb-10">
+        {cards.map((card, idx) => (
           <div
-            ref={notesRef}
-            className="bg-white rounded-xl p-6 shadow-md mt-10 border border-gray-200 prose prose-sm max-w-none"
+            key={idx}
+            onClick={() => handleCardClick(card.title)}
+            className={`rounded-2xl p-6 shadow-md cursor-pointer transition-transform transform hover:scale-105 ${card.color}`}
           >
-            <h2 className="text-xl font-bold text-blue-950 mb-4">
-              Recommendation By HealthIQ.AI: {selectedCard}
-            </h2>
-
-            {loading && <p className="text-gray-500">Loading recommendation...</p>}
-
-            {completedLines.map((line, index) => (
-              <ReactMarkdown
-                key={index}
-                className="prose prose-sm text-gray-800 mb-3"
-                components={{
-                  h3: ({ node, ...props }) => (
-                    <h3 className="text-lg font-semibold text-blue-800 mt-4 mb-2" {...props} />
-                  ),
-                  strong: ({ node, ...props }) => (
-                    <strong className="text-gray-900 font-bold" {...props} />
-                  ),
-                  ul: ({ node, ...props }) => (
-                    <ul className="list-disc ml-6 space-y-1" {...props} />
-                  ),
-                  p: ({ node, ...props }) => <p className="mb-2" {...props} />,
-                }}
-              >
-                {line.replace(/\\n|n/g, "\n")}
-              </ReactMarkdown>
-            ))}
-
-            {currentLine && (
-              <ReactMarkdown className="prose prose-sm text-gray-800">
-                {currentLine.replace(/\\n|n/g, "\n")}
-              </ReactMarkdown>
-            )}
+            <h3 className="text-xl font-semibold text-blue-900 mb-2">
+              {card.title}
+            </h3>
+            <p className="text-gray-700">{card.desc}</p>
           </div>
+        ))}
+      </div>
+
+      {/* --- AI Recommendation Output --- */}
+      <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-md p-6">
+        {isLoading ? (
+          <div className="text-center text-blue-900 font-semibold animate-pulse">
+            Fetching your personalized exercise plan...
+          </div>
+        ) : exerciseText ? (
+          <>
+            <h2 className="text-xl font-bold text-blue-950 mb-4">
+              {selectedCard} — AI Recommendation
+            </h2>
+            <ReactMarkdown className="prose prose-blue max-w-none text-gray-800">
+              {exerciseText}
+            </ReactMarkdown>
+          </>
+        ) : (
+          <p className="text-center text-gray-500">
+            Select a category above to see your AI-powered recommendation.
+          </p>
         )}
       </div>
     </div>
