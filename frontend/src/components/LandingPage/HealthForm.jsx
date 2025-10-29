@@ -158,15 +158,18 @@ const HealthForm = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center p-4">
-      {loading && (
-  <div className="absolute inset-0 bg-white/70 backdrop-blur-sm flex flex-col items-center justify-center z-50">
-    <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-green-500 border-solid"></div>
-    <p className="mt-4 text-lg font-semibold text-green-700">Submitting your info...</p>
-  </div>
-)}
+    <div className="relative min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center p-4">
+  {/* Loading Overlay */}
+  {loading && (
+    <div className="absolute inset-0 bg-white/70 backdrop-blur-sm flex flex-col items-center justify-center z-50">
+      <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-green-500 border-solid"></div>
+      <p className="mt-4 text-lg font-semibold text-green-700">
+        Submitting your info...
+      </p>
+    </div>
+  )}
 
-      <div className="max-w-4xl w-full bg-white shadow-2xl rounded-3xl overflow-hidden">
+      <div className="relative max-w-4xl w-full bg-white shadow-2xl rounded-3xl overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-green-600 p-8 text-white text-center">
           <h1 className="text-4xl font-extrabold mb-2">
