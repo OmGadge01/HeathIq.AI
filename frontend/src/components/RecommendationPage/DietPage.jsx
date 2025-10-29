@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import ReactMarkdown from "react-markdown";
 
 const DietCard = ({ title, description, color, onClick }) => (
   <div
@@ -36,26 +35,22 @@ const DietPage = () => {
   const dietCards = [
     {
       title: "Nutrition Focus",
-      description:
-        "Choose foods that fuel your body and mind for peak performance.",
+      description: "Choose foods that fuel your body and mind for peak performance.",
       color: "bg-blue-100",
     },
     {
       title: "Meal Timing",
-      description:
-        "Structure your meals to support energy, digestion, and recovery.",
+      description: "Structure your meals to support energy, digestion, and recovery.",
       color: "bg-pink-100",
     },
     {
       title: "Hydration",
-      description:
-        "Stay energized and balanced with optimal water intake daily.",
+      description: "Stay energized and balanced with optimal water intake daily.",
       color: "bg-yellow-100",
     },
     {
       title: "Healthy Habits",
-      description:
-        "Build consistent routines to support long-term nutrition goals.",
+      description: "Build consistent routines to support long-term nutrition goals.",
       color: "bg-gray-100",
     },
   ];
@@ -72,25 +67,21 @@ const DietPage = () => {
       const userId = localStorage.getItem("userId");
       if (!userId) throw new Error("User ID not found");
 
-      const res = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/recommendation`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId }),
-        }
-      );
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/recommendation`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId }),
+      });
 
       if (!res.ok) {
-        const errData = await res.json();
+        const errData = await res.json().catch(() => ({}));
         throw new Error(errData.error || "Failed to fetch recommendation");
       }
 
       const data = await res.json();
+      let dietText = typeof data.diet === "string" ? data.diet : JSON.stringify(data.diet);
 
-      // Remove unwanted characters and emojis
-      let dietText =
-        typeof data.diet === "string" ? data.diet : JSON.stringify(data.diet);
+      // Clean text: remove unwanted characters and emojis
       dietText = dietText
         .replace(/[\{\}\[\]<>\/\\]/g, "")
         .replace(/🍽️|🕒|💧|🌿/g, "");
@@ -103,13 +94,10 @@ const DietPage = () => {
       setAiResponse({ dietLines });
     } catch (err) {
       console.error("Failed to fetch AI recommendation:", err);
-      setAiResponse({ dietLines: ["Error fetching recommendation."] });
+      setAiResponse({ dietLines: ["⚠️ Error fetching recommendation. Please try again."] });
     } finally {
       setLoading(false);
-      setTimeout(
-        () => notesRef.current?.scrollIntoView({ behavior: "smooth" }),
-        300
-      );
+      setTimeout(() => notesRef.current?.scrollIntoView({ behavior: "smooth" }), 300);
     }
   };
 
@@ -119,7 +107,6 @@ const DietPage = () => {
     if (lineIndex >= aiResponse.dietLines.length) return;
 
     const fullLine = aiResponse.dietLines[lineIndex];
-
     const timer = setTimeout(() => {
       if (charIndex < fullLine.length) {
         setCurrentLine((prev) => prev + fullLine[charIndex]);
@@ -130,7 +117,7 @@ const DietPage = () => {
         setLineIndex((prev) => prev + 1);
         setCharIndex(0);
       }
-    }, 20);
+    }, 25);
 
     return () => clearTimeout(timer);
   }, [charIndex, lineIndex, selectedCard, aiResponse]);
@@ -138,7 +125,7 @@ const DietPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-6 sm:px-10">
       <div className="max-w-6xl mx-auto space-y-12">
-        {/* Intro */}
+        {/* Header */}
         <div className="text-center">
           <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 font-sans">
             Your Personalized Diet Plan
@@ -148,7 +135,7 @@ const DietPage = () => {
           </p>
         </div>
 
-        {/* Diet Cards */}
+        {/* Card Section */}
         <SectionBlock
           title="Diet Plan"
           subtitle="Tailored nutritional strategies to help you meet your goals."
@@ -156,30 +143,32 @@ const DietPage = () => {
           onCardClick={handleCardClick}
         />
 
-        {/* Notes Section */}
+        {/* AI Recommendation Section */}
         {selectedCard && (
           <div
             ref={notesRef}
             className="bg-white p-6 mt-10 rounded-xl shadow-md border border-gray-200 prose prose-sm max-w-none"
           >
             <h2 className="text-xl font-bold text-blue-950 mb-4">
-              Recommendation By HealthIQ.AI: {selectedCard}
+              Recommendation by HealthIQ.AI: {selectedCard}
             </h2>
 
-            {loading && (
+            {loading ? (
               <p className="text-gray-500">Loading recommendation...</p>
+            ) : (
+              <>
+                {completedLines.map((line, index) => (
+                  <p key={index} className="mb-2">
+                    {line.startsWith("**") ? (
+                      <strong>{line.replace(/\*\*/g, "")}</strong>
+                    ) : (
+                      line
+                    )}
+                  </p>
+                ))}
+                {currentLine && <p>{currentLine}</p>}
+              </>
             )}
-
-            {completedLines.map((line, index) => (
-              <p key={index} className="mb-2">
-                {line.startsWith("**") ? (
-                  <strong>{line.replace(/\*\*/g, "")}</strong>
-                ) : (
-                  line
-                )}
-              </p>
-            ))}
-            {currentLine && <p>{currentLine}</p>}
           </div>
         )}
       </div>

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 
-// 🔹 Reusable Card Component
 const ExerciseCard = ({ title, description, color, onClick }) => (
   <div
     onClick={onClick}
@@ -12,7 +11,7 @@ const ExerciseCard = ({ title, description, color, onClick }) => (
   </div>
 );
 
-// 🔹 Section Block
+
 const SectionBlock = ({ title, subtitle, cards, onCardClick }) => (
   <div className="bg-[#597ea8] p-6 rounded-xl shadow-md">
     <h2 className="text-2xl font-bold mb-1 text-black">{title}</h2>
@@ -35,7 +34,6 @@ const ExercisePage = () => {
   const [loading, setLoading] = useState(false);
   const notesRef = useRef(null);
 
-  // 🔹 Exercise category cards
   const exerciseCards = [
     { title: "Training Structure", description: "Plan your week with structured strength & cardio.", color: "bg-green-100" },
     { title: "Rest & Recovery", description: "Recover efficiently with sleep and active rest.", color: "bg-red-100" },
@@ -43,7 +41,7 @@ const ExercisePage = () => {
     { title: "Form & Function", description: "Maintain posture and form for safe exercise.", color: "bg-gray-100" },
   ];
 
-  // 🔹 Handle card click — fetch personalized recommendations
+  
   const handleCardClick = async (title) => {
     setSelectedCard(title);
     setCompletedLines([]);
@@ -70,23 +68,23 @@ const ExercisePage = () => {
 
       const data = await res.json();
 
-      // Extract & clean exercise plan text
+      
       let exerciseText =
         typeof data.exercise === "string" ? data.exercise : JSON.stringify(data.exercise);
 
-      // Clean up unwanted characters & emojis
+      
       exerciseText = exerciseText
         .replace(/[\{\}\[\]<>\/\\]/g, "")
         .replace(/🏋️‍♀️|😴|🚴|🎯/g, "")
         .replace(/\\n|n/g, "\n");
 
-      // Split text into meaningful lines
+      
       const allLines = exerciseText
         .split("\n")
         .map((line) => line.trim())
         .filter((line) => line.length > 0);
 
-      // Filter for selected card section
+ 
       const cardLines = allLines.filter((line) =>
         line.toLowerCase().includes(title.toLowerCase())
       );
@@ -103,7 +101,7 @@ const ExercisePage = () => {
     }
   };
 
-  // 🔹 Typing animation
+  
   useEffect(() => {
     if (!selectedCard || aiResponse.exerciseLines.length === 0) return;
     if (lineIndex >= aiResponse.exerciseLines.length) return;
@@ -124,7 +122,7 @@ const ExercisePage = () => {
     return () => clearTimeout(timer);
   }, [charIndex, lineIndex, selectedCard, aiResponse]);
 
-  // 🔹 Render UI
+  
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-6 sm:px-10">
       <div className="max-w-6xl mx-auto space-y-12">

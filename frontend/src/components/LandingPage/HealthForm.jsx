@@ -14,6 +14,8 @@ import {
   CheckCircleIcon,
 } from "@heroicons/react/24/solid";
 
+
+
 const HealthForm = () => {
   const navigate = useNavigate();
 
@@ -38,7 +40,7 @@ const HealthForm = () => {
     smoking: false,
     stress: 5,
   });
-
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [currentSection, setCurrentSection] = useState(0);
   const sections = [
@@ -79,9 +81,10 @@ const HealthForm = () => {
       return;
     }
 
+    setLoading(true);
+
     try {
-      const API_BASE =
-        import.meta.env.VITE_API_BASE_URL;
+      const API_BASE = import.meta.env.VITE_API_BASE_URL;
       const res = await fetch(`${API_BASE}/api/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -93,7 +96,6 @@ const HealthForm = () => {
       if (res.ok) {
         alert(data.message);
 
-        // ✅ Save userId to localStorage for later use (recommendation)
         if (data.user && data.user._id) {
           localStorage.setItem("userId", data.user._id);
           console.log("User ID saved:", data.user._id);
@@ -101,7 +103,6 @@ const HealthForm = () => {
           console.warn("User ID not found in response:", data);
         }
 
-        // ✅ Reset form and navigate
         setForm({
           name: "",
           email: "",
@@ -132,6 +133,8 @@ const HealthForm = () => {
     } catch (err) {
       console.error("Error submitting form:", err);
       alert("Error submitting form");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -156,6 +159,13 @@ const HealthForm = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center p-4">
+      {loading && (
+  <div className="absolute inset-0 bg-white/70 backdrop-blur-sm flex flex-col items-center justify-center z-50">
+    <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-green-500 border-solid"></div>
+    <p className="mt-4 text-lg font-semibold text-green-700">Submitting your info...</p>
+  </div>
+)}
+
       <div className="max-w-4xl w-full bg-white shadow-2xl rounded-3xl overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-green-600 p-8 text-white text-center">
