@@ -74,8 +74,8 @@ const ExercisePage = () => {
 
       
       exerciseText = exerciseText
-        .replace(/[\{\}\[\]<>\/\\]/g, "")
-        .replace(/🏋️‍♀️|😴|🚴|🎯/g, "")
+        .replace(/[\{\}\"\'\[\]<>\"\"json"\/\\]/g, "")
+        // .replace(/🏋️‍♀️|😴|🚴|🎯/g, "")
         .replace(/\\n|n/g, "\n");
 
       

@@ -83,8 +83,8 @@ const DietPage = () => {
 
       // Clean text: remove unwanted characters and emojis
       dietText = dietText
-        .replace(/[\{\}\[\]<>\/\\]/g, "")
-        .replace(/🍽️|🕒|💧|🌿/g, "");
+        .replace(/[\{\}\[\]<>\/\"json"\\]/g, "")
+        // .replace(/🍽️|🕒|💧|"json"|🌿/g, "");
 
       const dietLines = dietText
         .split("\n")
