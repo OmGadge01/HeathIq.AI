@@ -11,7 +11,6 @@ const ExerciseCard = ({ title, description, color, onClick }) => (
   </div>
 );
 
-
 const SectionBlock = ({ title, subtitle, cards, onCardClick }) => (
   <div className="bg-[#597ea8] p-6 rounded-xl shadow-md">
     <h2 className="text-2xl font-bold mb-1 text-black">{title}</h2>
@@ -35,13 +34,28 @@ const ExercisePage = () => {
   const notesRef = useRef(null);
 
   const exerciseCards = [
-    { title: "Training Structure", description: "Plan your week with structured strength & cardio.", color: "bg-green-100" },
-    { title: "Rest & Recovery", description: "Recover efficiently with sleep and active rest.", color: "bg-red-100" },
-    { title: "Cardio Routine", description: "Boost stamina and endurance with cardio plans.", color: "bg-yellow-100" },
-    { title: "Form & Function", description: "Maintain posture and form for safe exercise.", color: "bg-gray-100" },
+    {
+      title: "Training Structure",
+      description: "Plan your week with structured strength & cardio.",
+      color: "bg-green-100",
+    },
+    {
+      title: "Rest & Recovery",
+      description: "Recover efficiently with sleep and active rest.",
+      color: "bg-red-100",
+    },
+    {
+      title: "Cardio Routine",
+      description: "Boost stamina and endurance with cardio plans.",
+      color: "bg-yellow-100",
+    },
+    {
+      title: "Form & Function",
+      description: "Maintain posture and form for safe exercise.",
+      color: "bg-gray-100",
+    },
   ];
 
-  
   const handleCardClick = async (title) => {
     setSelectedCard(title);
     setCompletedLines([]);
@@ -67,30 +81,31 @@ const ExercisePage = () => {
       }
 
       const data = await res.json();
+      let allLines = [];
 
-      
-      let exerciseText =
-        typeof data.exercise === "string" ? data.exercise : JSON.stringify(data.exercise);
+      // ✅ Handle both string and object responses cleanly
+      if (typeof data.exercise === "object" && data.exercise !== null) {
+        allLines = Object.entries(data.exercise).map(
+          ([key, value]) => `${key}: ${value}`
+        );
+      } else if (typeof data.exercise === "string") {
+        allLines = data.exercise
+          .replace(/\\n|n/g, "\n")
+          .split("\n")
+          .map((line) => line.trim())
+          .filter((line) => line.length > 0);
+      }
 
-      
-      exerciseText = exerciseText
-        .replace(/[\{\}\[\]<>\/\\]/g, "")
-        .replace(/🏋️‍♀️|😴|🚴|🎯/g, "")
-        .replace(/\\n|n/g, "\n");
-
-      
-      const allLines = exerciseText
-        .split("\n")
-        .map((line) => line.trim())
-        .filter((line) => line.length > 0);
-
- 
+      // ✅ Match lines by clicked section title
       const cardLines = allLines.filter((line) =>
         line.toLowerCase().includes(title.toLowerCase())
       );
 
       setAiResponse({
-        exerciseLines: cardLines.length > 0 ? cardLines : ["No recommendation available for this section."],
+        exerciseLines:
+          cardLines.length > 0
+            ? cardLines
+            : ["No recommendation available for this section."],
       });
     } catch (err) {
       console.error("Failed to fetch AI recommendation:", err);
@@ -101,7 +116,7 @@ const ExercisePage = () => {
     }
   };
 
-  
+  // 🪄 Typing animation
   useEffect(() => {
     if (!selectedCard || aiResponse.exerciseLines.length === 0) return;
     if (lineIndex >= aiResponse.exerciseLines.length) return;
@@ -122,7 +137,6 @@ const ExercisePage = () => {
     return () => clearTimeout(timer);
   }, [charIndex, lineIndex, selectedCard, aiResponse]);
 
-  
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-6 sm:px-10">
       <div className="max-w-6xl mx-auto space-y-12">
