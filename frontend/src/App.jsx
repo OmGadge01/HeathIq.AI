@@ -45,6 +45,7 @@ function App() {
         path="/dashboard"
         element={
           <>
+          <DashBoardNavbar />
             <DashboardPage />
           </>
         }
