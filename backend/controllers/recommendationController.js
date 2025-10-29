@@ -30,7 +30,6 @@ export const getRecommendation = async (req, res) => {
         "diet": "write 3-5 bullet points for each diet category here...",
         "exercise": "write 3-5 bullet points for each exercise category here..."
       }
-      Make sure this is valid JSON — do NOT include extra text or explanations outside JSON.
     `;
 
     // Send request to Gemini
@@ -39,11 +38,9 @@ export const getRecommendation = async (req, res) => {
       contents: [{ role: "user", parts: [{ text: prompt }] }],
     });
 
-    // ✅ Safely extract text
     const resultText =
       response?.response?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "";
 
-    // ✅ Try to parse JSON correctly
     let resultJSON;
     try {
       resultJSON = JSON.parse(resultText);
