@@ -1,12 +1,13 @@
-// frontend/Dashboard/DashboardPage.jsx
-import Navbar from './DashboardNavbar';  // relative import from same folder
+import Navbar from './DashboardNavbar';
 import HomePage from './Homepage';
 
 const DashboardPage = () => {
   return (
-    <div>
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
-      <HomePage/>
+      <main className="flex-1 p-4">
+        <HomePage />
+      </main>
     </div>
   );
 };

@@ -160,7 +160,7 @@ const UserDashboard = () => {
           <ResponsiveContainer width="100%" height={150}>
             <PieChart>
               <Pie
-                data={alcoholData}
+                data={50}
                 dataKey="value"
                 nameKey="name"
                 cx="50%"
@@ -190,7 +190,7 @@ const UserDashboard = () => {
           <ResponsiveContainer width="100%" height={150}>
             <PieChart>
               <Pie
-                data={smokingData}
+                data={50}
                 dataKey="value"
                 nameKey="name"
                 cx="50%"
@@ -243,7 +243,7 @@ const UserDashboard = () => {
       <section className="bg-white p-6 rounded-lg shadow mt-8">
         <h3 className="text-lg font-semibold mb-4">Stress Level (1-10)</h3>
         <ResponsiveContainer width="100%" height={80}>
-          <BarChart data={stressData} layout="vertical" margin={{ left: 50 }}>
+          <BarChart data={66} layout="vertical" margin={{ left: 50 }}>
             <XAxis type="number" domain={[0, 10]} />
             <YAxis type="category" dataKey="name" />
             <Tooltip />

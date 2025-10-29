@@ -7,7 +7,7 @@ import DashboardPage from "./components/Dashboard/DashboardPage.jsx";
 import ExercisePage from "./components/RecommendationPage/ExercisePage.jsx";
 import DietPage from "./components/RecommendationPage/DietPage.jsx";
 import HowItWorks from "./components/LandingPage/HowItWorks.jsx";
-// Removed unused import
+
 
 function App() {
   return (
@@ -18,7 +18,6 @@ function App() {
           <div className="relative h-screen overflow-hidden">
             <Navbar />
             <LandingPage />
-           
           </div>
         }
       />
@@ -45,7 +44,6 @@ function App() {
         path="/dashboard"
         element={
           <>
-          <DashBoardNavbar />
             <DashboardPage />
           </>
         }
