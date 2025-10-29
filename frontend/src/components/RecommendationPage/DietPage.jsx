@@ -83,8 +83,8 @@ const DietPage = () => {
 
       // Clean text: remove unwanted characters and emojis
       dietText = dietText
-        .replace(/[\{\}\[\]<>\/\"json"\\]/g, "")
-        // .replace(/🍽️|🕒|💧|"json"|🌿/g, "");
+        .replace(/[\{\}\[\]<>\/\\]/g, "")
+        .replace(/🍽️|🕒|💧|🌿/g, "");
 
       const dietLines = dietText
         .split("\n")
@@ -103,26 +103,24 @@ const DietPage = () => {
 
   // Typing animation effect
   useEffect(() => {
-  if (!selectedCard || aiResponse.dietLines.length === 0) return;
-  if (lineIndex >= aiResponse.dietLines.length) return;
+    if (!selectedCard || aiResponse.dietLines.length === 0) return;
+    if (lineIndex >= aiResponse.dietLines.length) return;
 
-  const fullLine = aiResponse.dietLines[lineIndex];
-  let i = 0;
+    const fullLine = aiResponse.dietLines[lineIndex];
+    const timer = setTimeout(() => {
+      if (charIndex < fullLine.length) {
+        setCurrentLine((prev) => prev + fullLine[charIndex]);
+        setCharIndex((prev) => prev + 1);
+      } else {
+        setCompletedLines((prev) => [...prev, fullLine]);
+        setCurrentLine("");
+        setLineIndex((prev) => prev + 1);
+        setCharIndex(0);
+      }
+    }, 25);
 
-  const typeInterval = setInterval(() => {
-    if (i < fullLine.length) {
-      setCurrentLine((prev) => prev + fullLine[i]);
-      i++;
-    } else {
-      clearInterval(typeInterval);
-      setCompletedLines((prev) => [...prev, fullLine]);
-      setCurrentLine("");
-      setLineIndex((prev) => prev + 1);
-    }
-  }, 25);
-
-  return () => clearInterval(typeInterval);
-}, [lineIndex, selectedCard, aiResponse]);
+    return () => clearTimeout(timer);
+  }, [charIndex, lineIndex, selectedCard, aiResponse]);
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-6 sm:px-10">
