@@ -10,12 +10,13 @@ dotenv.config();
 
 const app = express();
 
-// ✅ Proper CORS setup
+
 app.use(
   cors({
     origin: [
-      "https://healthiqai.vercel.app", // your deployed frontend
-      "http://localhost:5173",         // local dev
+      "https://healthiqai.vercel.app",                        
+      /\.vercel\.app$/,                                       
+      "http://localhost:5173",                                
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -23,18 +24,19 @@ app.use(
   })
 );
 
+
 app.use(express.json());
 
-// ✅ Routes
+//Routes
 app.use("/api", userRoutes);
 app.use("/api/recommendation", recommendationRoutes);
 
-// ✅ MongoDB connection
+// MongoDB connection
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ Connected to MongoDB Atlas"))
-  .catch((err) => console.error("❌ MongoDB connection error:", err));
+  .then(() => console.log("Connected to MongoDB Atlas"))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
 // ✅ Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
