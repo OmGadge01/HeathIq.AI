@@ -6,21 +6,23 @@ import DashBoardNavbar from "./components/Dashboard/DashboardNavbar.jsx";
 import DashboardPage from "./components/Dashboard/DashboardPage.jsx";
 import ExercisePage from "./components/RecommendationPage/ExercisePage.jsx";
 import DietPage from "./components/RecommendationPage/DietPage.jsx";
+import HowItWorks from "./components/LandingPage/HowItWorks.jsx";
+// Removed unused import
 
 function App() {
   return (
     <Routes>
-     
       <Route
         path="/"
         element={
-          <>
+          <div className="relative h-screen overflow-hidden">
             <Navbar />
             <LandingPage />
-          </>
+           
+          </div>
         }
       />
-     
+
       <Route
         path="/form"
         element={
@@ -30,7 +32,15 @@ function App() {
           </>
         }
       />
-     
+      <Route
+        path="/howitworks"
+        element={
+          <>
+            <HowItWorks/>
+          </>
+        }
+      />
+
       <Route
         path="/dashboard"
         element={
@@ -39,7 +49,7 @@ function App() {
           </>
         }
       />
-     
+
       <Route
         path="/dashboard/Exercise"
         element={
@@ -49,7 +59,7 @@ function App() {
           </>
         }
       />
-      
+
       <Route
         path="/dashboard/Diet"
         element={
@@ -70,7 +80,19 @@ function LandingPage() {
     navigate("/form");
   };
 
-  return <Hero_section onGetStarted={handleGetStarted} />;
+  const handleHowItWorks = () => {
+    navigate("/howitworks");
+  };
+
+  return (
+    <>
+      <Hero_section 
+        onGetStarted={handleGetStarted}
+        onHowItWorks={handleHowItWorks}
+      />
+    </>
+  );
 }
+
 
 export default App;
